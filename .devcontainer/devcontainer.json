@@ -16,7 +16,8 @@
 			"extensions": [
 				"donjayamanne.python-extension-pack",
 				"ms-python.vscode-pylance",
-				"ms-python.python"
+				"ms-python.python",
+				"tomoki1207.pdf"
 			]
 		}
 	},
