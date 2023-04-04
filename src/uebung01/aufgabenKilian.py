@@ -1,5 +1,7 @@
 import math
-from sympy import Eq, Symbol, log
+import sympy as sp
+import sympy.vector as spv
+import numpy as np
 
 
 def pqformel(p, q):
@@ -33,18 +35,17 @@ def esuminverse(x, n):
     return str(sum)
 
 
-def area(llim: float, ulim: float, steps: int, formula: Eq):
+def area(llim: float, ulim: float, steps: int, formula: sp.Eq):
     area = 0
     width = (ulim-llim)/steps
     i = llim
-    x = Symbol('x')
+    x = sp.Symbol('x')
     h = formula.evalf(subs={x: i})
-    print(h)
     while i <= ulim:
         area += width*h
         i += width
         h = formula.evalf(subs={x: i})
-    print("rect:"+str(area))
+    print("rect: "+str(area))
     area = 0
     i = llim
     h = formula.evalf(subs={x: i})
@@ -53,8 +54,23 @@ def area(llim: float, ulim: float, steps: int, formula: Eq):
         h2 = formula.evalf(subs={x: i})
         area += width*(h+h2)/2
         h = h2
-    print("trapez:"+str(area))
-    return "equation done"
+    print("trapez: "+str(area))
+    return
+
+
+def areaVec(llim: float, ulim: float, steps: int, formula: sp.Eq):
+    count = 1
+    width = (ulim-llim)/steps
+    x = sp.Symbol('x')
+    i = llim
+    vals = [formula.evalf(subs={x: i})]
+    while i <= ulim:
+        i += width
+        vals.append(formula.evalf(subs={x: i}))
+        count = count+1
+    vec = np.array(vals)
+    print("trapez Vector: "+str(np.trapz(vec, dx=width)))
+    return
 
 
 print("1.a)"+pqformel(10, 1))
@@ -82,8 +98,11 @@ print("2.b)"+esuminverse(12, 10))
 print("2.b)"+esuminverse(1, 100))
 print("2.b)"+esuminverse(22, 3))
 
-x = Symbol('x')
+x = sp.Symbol('x')
 eq1 = x**-2
-eq2 = log(x)
+eq2 = sp.log(x)
 area(0.1, 10, 100, eq1)
 area(1, 2, 100, eq2)
+
+areaVec(0.1, 10, 100, eq1)
+areaVec(1, 2, 100, eq2)
