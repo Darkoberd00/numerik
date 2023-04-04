@@ -73,6 +73,23 @@ def areaVec(llim: float, ulim: float, steps: int, formula: sp.Eq):
     return
 
 
+def taylor(k: int, formula: sp.Eq, x0: float):
+    taylorsum = 0
+    x = sp.Symbol('x')
+    for i in range(k):
+        taylorsum += (formula.evalf(subs={x: x0})/sp.factorial(i))*(x-x0)**i
+        formula = sp.diff(formula, x)
+    return taylorsum
+
+
+def heron(k: int, x: float):
+    ret = x
+    for i in range(k):
+        ret = 0.5*(ret+x/ret)
+    return ret
+
+
+# 1
 print("1.a)"+pqformel(10, 1))
 print("1.a)"+pqformel(1000, 1))
 print("1.a)"+pqformel(100000, 1))
@@ -85,7 +102,7 @@ print("1.b)"+altformel(100000, 1))
 print("1.b)"+altformel(1000000, 1))
 print("1.b)"+altformel(10000000, 1))
 
-
+# 2
 print("2.a)"+esum(2, 1))
 print("2.a)"+esum(0.5, 6))
 print("2.a)"+esum(12, 10))
@@ -98,11 +115,25 @@ print("2.b)"+esuminverse(12, 10))
 print("2.b)"+esuminverse(1, 100))
 print("2.b)"+esuminverse(22, 3))
 
+# 3
 x = sp.Symbol('x')
 eq1 = x**-2
 eq2 = sp.log(x)
 area(0.1, 10, 100, eq1)
 area(1, 2, 100, eq2)
 
+# 4
 areaVec(0.1, 10, 100, eq1)
 areaVec(1, 2, 100, eq2)
+
+# 5
+sqrt2 = math.sqrt(2)
+eq3 = taylor(10, x**0.5, 1)
+print("Entwicklungspunkt 1, k=10: "+str(eq3.evalf(subs={x: 2})))
+print(sqrt2-eq3.evalf(subs={x: 2}))
+eq3 = taylor(10, x**0.5, 4)
+print("Entwicklungspunkt 4, k=10 "+str(eq3.evalf(subs={x: 2})))
+print(sqrt2-eq3.evalf(subs={x: 2}))
+
+print("Heron k=10: "+str(heron(10, 2.0)))
+print(sqrt2-heron(10, 2))
