@@ -1,6 +1,5 @@
 import math
 import sympy as sp
-import sympy.vector as spv
 import numpy as np
 
 
