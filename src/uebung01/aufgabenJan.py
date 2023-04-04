@@ -127,12 +127,12 @@ print()
 print("Aufgabe3:")
 def squareRule(f,a,b,n):
     
-    return(ret)
+    return ()
 
 
 def trapezeRule(f,a,b,n):
     
-    return(ret)
+    return ()
 
 print('Ergebnisse: ')
 print('n: 10, x: 1')

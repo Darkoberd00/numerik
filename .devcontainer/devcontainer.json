@@ -17,7 +17,8 @@
 				"donjayamanne.python-extension-pack",
 				"ms-python.vscode-pylance",
 				"ms-python.python",
-				"tomoki1207.pdf"
+				"tomoki1207.pdf",
+				"GitHub.copilot"
 			]
 		}
 	},
