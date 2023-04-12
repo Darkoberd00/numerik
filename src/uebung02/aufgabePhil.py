@@ -33,17 +33,25 @@ def cholesky(A):
                 L[i][j] = (A[i][j]-sum)/L[j][j]
     return L
 
-def cholesky_spezial(n):
-    V1 = np.zeros(n)
-    V2 = np.zeros(n)
-                
+#hole mir die Diagonale von A und die sub diagonale darunter als vektor
+def getDiagonal(A):
+    n = len(A)
+    diagonal = np.zeros(n)
+    subdiagonal = np.zeros(n-1)
+    for i in range(n):
+        diagonal[i] = A[i][i]
+        if i < n-1:
+            subdiagonal[i] = A[i+1][i]
+    return (diagonal, subdiagonal)
 
-def printMatrix(matrix):
-    for i in range(len(matrix)):
-        print(matrix[i])
+def style(diagonal, subdiagonal): 
+    return "Diagonal: " + str(diagonal) + " Subdiagonal: " + str(subdiagonal)
         
 matrix0 = createTridiagonalgestaltMatrix(4)
-printMatrix(cholesky(matrix0))
+print("3.b) n=4 " , getDiagonal(cholesky(matrix0)))
 matrix1 = createTridiagonalgestaltMatrix(100) 
+print("3.b) n=100 " , getDiagonal(cholesky(matrix1)))
 matrix2 = createTridiagonalgestaltMatrix(1000)
+print("3.b) n=1000 " , getDiagonal(cholesky(matrix2)))
 matrix3 = createTridiagonalgestaltMatrix(10000)
+print("3.b) n=10000 " , getDiagonal(cholesky(matrix3)))
