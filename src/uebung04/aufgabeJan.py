@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Thu Apr 20 13:22:31 2023
 
@@ -8,19 +7,29 @@ Created on Thu Apr 20 13:22:31 2023
 import numpy
 
 #LU Zerlegung
-def zerlegung(A):
+def zerlegung(A, pivot=False):
     p = numpy.arange(A.shape[0])
-    LU = A.copy() #Kopie von A anlegen
+    LU = A.copy()
+
     for i in range(LU.shape[0]):
-        if LU[i, i] == 0:
-            for j in range(i+1, LU.shape[0]): #Tauschen
-                if LU[j, i] != 0:
-                    LU[[i, j]] = LU[[j, i]]
-                    p[i] = j
-                    break
-        for j in range(i+1, LU.shape[0]):
+        if pivot:
+            # Pivot Element finden
+            max_idx = numpy.argmax(numpy.abs(LU[i:, i])) + i
+            if max_idx != i:
+                p[i] = max_idx
+                LU[[i, max_idx]] = LU[[max_idx, i]]
+        else:
+            if LU[i, i] == 0: #Tauschen
+                for j in range(i + 1, LU.shape[0]):
+                    if LU[j, i] != 0:
+                        p[i] = j
+                        LU[[i, j]] = LU[[j, i]]
+                        break
+
+        for j in range(i + 1, LU.shape[0]):
             LU[j, i] /= LU[i, i]
-            LU[j, i+1:] -= LU[j, i] * LU[i, i+1:]
+            LU[j, i + 1:] -= LU[j, i] * LU[i, i + 1:]
+
     return LU, p
 def permutation(p, b): # Permutation anwenden
     b_perm = b.copy()
@@ -38,43 +47,51 @@ def rueckwaerts(LU, y): # Rückwerts einsetzen
         x[i] = (y[i] - LU[i, i+1:] @ x[i+1:]) / LU[i, i]
     return x
 
-#Sherman
-def sherman(A, b, u, v): # Sherman anwenden
-    #Anwendung der LU Zerlegung
-    LU, p = zerlegung(A)
-
-    u_perm = permutation(p, u)
-    y = vorwaerts(LU, u_perm)
-
-    z = rueckwaerts(LU, y)
-
-    #Testen ob regulär
-    div = (1 + v.T @ z)
-    if div == 0:
-        raise ArithmeticError('1 + v^T z = 0')
-
-    #Sherman anzuwenden
-    alpha = 1 / div
-    b_perm = permutation(p, b)
-    y_2 = vorwaerts(LU, b_perm)
-
-    z_2 = rueckwaerts(LU, y_2)
-
-    x_2 = z_2 - alpha * (v.T @ z_2) * z
-    return x_2
-
-
 def test_function():
+    print("Testen der Funktion --> Werte aus Hausaufgabe 3, Aufgabe 2c) \n")
+
     A = numpy.array([[0,0,0,1],[2,1,2,0],[4,4,0,0],[2,3,1,0]])
 
-    u = numpy.array([0,1,2,3])
-    v = numpy.array([0,0,0,1])
+    LU, p = zerlegung(A)
+
+    print(f"LU = {LU}")
+    print(f"p = {p}")
 
     b = numpy.array([3,5,4,5])
+    c = permutation(p,b)
+    y = vorwaerts(LU,c)
+    x = rueckwaerts(LU,y)
 
-    result = sherman(A,b,u,v)
+    print(f"b = {b}")
+    print(f"c = {c}")
+    print(f"y = {y}")
+    print(f"x = {x}")
 
-    print(result)
+def pivot_vergleich():
+    beta = 10
+
+    for n in [10, 20, 100]:
+        A = numpy.eye(n, n) + numpy.diag(numpy.full((n - 1,), -beta), -1)
+        A[0, -1] = beta
+        A[-1, -1] = 0
+
+        b = numpy.full((n,), 1 - beta)
+        b[0] = 1 + beta
+        b[-1] = -beta
+
+        for pivot in [True, False]:
+            LU, p = zerlegung(A, pivot)
+            b_perm = permutation(p, b)
+            y = vorwaerts(LU, b_perm)
+            x = rueckwaerts(LU, y)
+            print(f"n = {n}, pivot = {pivot},x = \n {x}")
+
+    print(f"\n Vergleicht man die Werte, die mit und ohne Pivot erhält, dann fällt auf, dass die Werte mit Pivot besser sind.")
 
 
+# Aufruf der Funktionen:
 test_function()
+print("\n")
+pivot_vergleich()
+
+
